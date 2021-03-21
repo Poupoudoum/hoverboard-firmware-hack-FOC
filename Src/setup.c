@@ -36,6 +36,7 @@ pb10 usart3 dma1 channel2/3
 */
 
 #include "defines.h"
+#include "chips.h"
 #include "config.h"
 #include "setup.h"
 

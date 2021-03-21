@@ -25,6 +25,7 @@
 #include "stm32f1xx_hal.h"
 #include "defines.h"
 #include "setup.h"
+#include "chips.h"
 #include "config.h"
 #include "util.h"
 #include "BLDC_controller.h"      /* BLDC's header file */
@@ -33,6 +34,11 @@
 
 #if defined(DEBUG_I2C_LCD) || defined(SUPPORT_LCD)
 #include "hd44780.h"
+#endif
+
+#if !defined(VARIANT_ADC) && !defined(VARIANT_USART) && !defined(VARIANT_NUNCHUK) && !defined(VARIANT_PPM) && !defined(VARIANT_PWM) && \
+    !defined(VARIANT_IBUS) && !defined(VARIANT_HOVERCAR) && !defined(VARIANT_HOVERBOARD) && !defined(VARIANT_TRANSPOTTER) && !defined(VARIANT_SKATEBOARD)
+  #error Variant not defined! Please check platformio.ini or Inc/config.h for available variants.
 #endif
 
 void SystemClock_Config(void);
@@ -287,6 +293,9 @@ int main(void) {
       }
       #endif
 
+      
+      chips_tunning_motorcontrol(); //CHIPSMODIF
+      
       // ####### MIXER #######
       // cmdR = CLAMP((int)(speed * SPEED_COEFFICIENT -  steer * STEER_COEFFICIENT), INPUT_MIN, INPUT_MAX);
       // cmdL = CLAMP((int)(speed * SPEED_COEFFICIENT +  steer * STEER_COEFFICIENT), INPUT_MIN, INPUT_MAX);
@@ -306,6 +315,7 @@ int main(void) {
         #endif
       }
     #endif
+    
 
     #ifdef VARIANT_TRANSPOTTER
       distance    = CLAMP(input1[inIdx].cmd - 180, 0, 4095);
@@ -476,7 +486,9 @@ int main(void) {
     poweroffPressCheck();
 
     // ####### BEEP AND EMERGENCY POWEROFF #######
-    if ((TEMP_POWEROFF_ENABLE && board_temp_deg_c >= TEMP_POWEROFF && speedAvgAbs < 20) || (batVoltage < BAT_DEAD && speedAvgAbs < 20)) {  // poweroff before mainboard burns OR low bat 3
+    // CHIPSMODIF if ((TEMP_POWEROFF_ENABLE && board_temp_deg_c >= TEMP_POWEROFF && speedAvgAbs < 20) || (batVoltage < BAT_DEAD && speedAvgAbs < 20)) {  // poweroff before mainboard burns OR low bat 3
+    if (TEMP_POWEROFF_ENABLE && board_temp_deg_c >= TEMP_POWEROFF) { // CHIPSMODIF No need to be stopped for overtemp shutdown on 3 wheels AND no low bat shutdown the BMS does this job just fine
+      beepLong(5); // CHIPSMODIF Beep for overtemp
       poweroff();
     } else if (rtY_Left.z_errCode || rtY_Right.z_errCode) {                                           // 1 beep (low pitch): Motor error, disable motors
       enable = 0;

@@ -4,6 +4,7 @@
 #include "stm32f1xx_hal.h"
 #include "defines.h"
 #include "setup.h"
+#include "chips.h"
 #include "config.h"
 
 TIM_HandleTypeDef TimHandle;

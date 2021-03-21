@@ -24,6 +24,7 @@
 #include "stm32f1xx_hal.h"
 #include "defines.h"
 #include "setup.h"
+#include "chips.h"
 #include "config.h"
 #include "eeprom.h"
 #include "util.h"
@@ -910,8 +911,10 @@ void readInputRaw(void) {
  */
 void handleTimeout(void) {
     #ifdef CONTROL_ADC
+    
+    /* MOTHERFUCKING CHIPSMODIF
     if (inIdx == CONTROL_ADC) {
-      // If input1 or Input2 is either below MIN - Threshold or above MAX + Threshold, ADC protection timeout
+       * // If input1 or Input2 is either below MIN - Threshold or above MAX + Threshold, ADC protection timeout
       if (IN_RANGE(input1[inIdx].raw, input1[inIdx].min - ADC_PROTECT_THRESH, input1[inIdx].max + ADC_PROTECT_THRESH) &&
           IN_RANGE(input2[inIdx].raw, input2[inIdx].min - ADC_PROTECT_THRESH, input2[inIdx].max + ADC_PROTECT_THRESH)) {
           timeoutFlgADC = 0;                            // Reset the timeout flag
@@ -923,6 +926,7 @@ void handleTimeout(void) {
         }
       }
     }
+    */
     #endif
 
     #if defined(CONTROL_SERIAL_USART2) || defined(SIDEBOARD_SERIAL_USART2)
